@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = "user@Token";
 
-// Creating an endpoint and validating data with express-validator
+// Creating an endpoint and validating user data to create a new user in DB with express-validator
 router.post('/createuser', [
     body('name', 'Enter a valid name').isLength({min: 3}),
     body('email', 'Enter a valid email').isEmail(),
@@ -46,7 +46,6 @@ async (req, res) => {
             }
         }
         const token = jwt.sign(data, JWT_SECRET);
-        // console.log({token});
 
         res.json({Message: "Successfully SignUp", token });
 
@@ -56,6 +55,56 @@ async (req, res) => {
         res.status(500).send("Internal Server Error");
     }   
     
+})
+
+//Creating an endpoint to authenticate user with login credentials
+
+router.post('/login', [
+    body('email', "Enter a valid email address").isEmail(),
+    body('password', "Password can't be blank").exists()
+], async(req, res) => {
+
+    //Checking for errors
+    const errors = validationResult(req);
+
+    if(!errors.isEmpty()){
+        return res.status(400).json({ errors : errors.array()})
+    }
+
+    let {email, password} = req.body;
+
+    //Checking whether User input data is present already in DB
+    try{
+
+        let user = await User.findOne({email});
+
+        if(!user){
+            return res.status(400).send("Please provide correct credentials");
+        }
+
+        let passMatch = await bcryptjs.compare(password, user.password);
+
+        if(!passMatch){
+            return res.status(400).send("Please provide correct credentials");
+        }
+
+        const data = {
+            user:{
+                id: user.id
+            }
+        }
+        //If everything is fine then we will generate the token and send it as a response
+        
+        const token = jwt.sign(data, JWT_SECRET);
+
+        res.json({Message: "Login Successfully", token });
+
+    }
+    catch(error){
+        console.error(error.message);
+        res.status(500).send("Internal Server Error");
+    }
+
 })
 
 module.exports = router
