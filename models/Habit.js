@@ -13,6 +13,10 @@ const HabitSchema = new Schema({
     description:{
         type: String
     },
+    done:{
+        type: Boolean,
+        // required: true
+    },
     streak:{
         type: Number,
         default: 0,
