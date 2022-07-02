@@ -13,16 +13,20 @@ const HabitSchema = new Schema({
     description:{
         type: String
     },
-    done:{
-        type: Boolean,
-        // required: true
-    },
     streak:{
         type: Number,
         default: 0,
         required: true
     },
-    Date:{
+    done:{
+        type: Boolean,
+        default: false
+    },
+    // LastPerformDate:{
+    //     type: Date,
+    //     default: Date.now
+    // },
+    AddedDate:{
         type: Date,
         default: Date.now
     },

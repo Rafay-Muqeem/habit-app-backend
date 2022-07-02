@@ -3,6 +3,32 @@ const router = express.Router();
 const Habit = require('../models/Habit');
 const fetchUser = require('../middleware/fetchuser');
 const { body, validationResult } = require('express-validator');
+const moment = require('moment');
+const mongoose = require('mongoose');
+const mongoURI = "mongodb://localhost:27017/habit-app";
+
+const timeInSec = moment().endOf('day').valueOf()
+const Interval = timeInSec - Date.now();
+
+
+console.log(Interval);
+
+setInterval(async ()=>{
+    mongoose.connect(mongoURI, (error, db) => {
+        if(error) console.log(error);
+    
+        var myquery = {done: false};
+        var newvalues = { $set: {streak: 0} };
+        db.collection("habits").updateMany( myquery, newvalues);
+
+        var myquery2 = { done: true };
+        var newvalues2 = { $set: {done: false} ,  $inc: {streak:1} };
+        db.collection("habits").updateMany( myquery2, newvalues2);
+    
+    });
+
+}, Interval)
+
 
 // Router 1 : fetch all habits of a respective user api/habit/fetchallhabits
 router.get('/fetchallhabits', fetchUser, async (req, res) => {
@@ -16,7 +42,7 @@ router.get('/fetchallhabits', fetchUser, async (req, res) => {
     }
 })
 
-//Router 2 : Add habits for a respective user pi/habit/addhabit
+//Router 2 : Add habits for a respective user api/habit/addhabit
 router.post('/addhabit', fetchUser, [
     body('name', 'Enter a valid name').isLength({ min: 3 }),
     body('description', 'description must be atleast 5 characters long').isLength({ min: 5 })
@@ -30,10 +56,10 @@ router.post('/addhabit', fetchUser, [
     }
 
     try {
-        const { name, description, streak } = req.body;
+        const { name, description } = req.body;
 
         const habit = new Habit({
-            user: req.user.id, name, description, streak
+            user: req.user.id, name, description
         })
 
         const saveHabit = await habit.save();
@@ -46,7 +72,7 @@ router.post('/addhabit', fetchUser, [
     }
 })
 
-//Router 3: Update a respective habit of a respective user pi/habit/updatehabit
+//Router 3: Update a respective habit of a respective user api/habit/updatehabit
 router.put('/updatehabit/:id', fetchUser, async (req, res) => {
 
     const { name, description } = req.body;
@@ -81,7 +107,7 @@ router.put('/updatehabit/:id', fetchUser, async (req, res) => {
     }
 })
 
-//Router 4: Delete habit of a respective user pi/habit/deletehabit
+//Router 4: Delete habit of a respective user api/habit/deletehabit
 router.delete('/deletehabit/:id', fetchUser, async (req, res) => {
 
     try {
@@ -104,6 +130,36 @@ router.delete('/deletehabit/:id', fetchUser, async (req, res) => {
         console.error(error.message);
         res.status(500).send("Internal Server Error");
     }
+})
+
+// Route 5 : When Respective Habit Performed by user api/habit/donehabit
+
+router.put('/doneHabit/:id', fetchUser, async(req, res) => {
+    try{
+        const {done, streak} = req.body;
+        const doneHabit = { done: done, streak: streak };
+
+        let habit = await Habit.findById(req.params.id);
+
+        // Chacking whether habit with this id exist
+        if(!habit){
+            return res.status(404).send("Not Found");
+        }
+
+        //Checking whether habit belongs to logged in user 
+        if (habit.user.toString() !== req.user.id) {
+            return res.status(401).send("Unauthorized Not Allowed");
+        }
+
+        habit = await Habit.findByIdAndUpdate(req.params.id, { $set: doneHabit }, { new: true });
+        res.json({ Success: "Done Successfully", habit: habit });
+
+    }
+    catch(error){
+        console.error(error.message);
+        res.status(500).send("Internal Server Error");
+    }
+
 })
 
 module.exports = router;
