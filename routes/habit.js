@@ -7,18 +7,15 @@ const moment = require('moment');
 const mongoose = require('mongoose');
 const mongoURI = "mongodb://localhost:27017/habit-app";
 
-const timeInSec = moment().endOf('day').valueOf()
+const timeInSec = moment().endOf('day').valueOf();
 const Interval = timeInSec - Date.now();
-
-
-console.log(Interval);
 
 setInterval(async ()=>{
     mongoose.connect(mongoURI, (error, db) => {
         if(error) console.log(error);
     
         var myquery = {done: false};
-        var newvalues = { $set: {streak: 0} };
+        var newvalues = { $set: {done: false, streak: 0} };
         db.collection("habits").updateMany( myquery, newvalues);
 
         var myquery2 = { done: true };
@@ -27,7 +24,7 @@ setInterval(async ()=>{
     
     });
 
-}, Interval)
+}, Interval);
 
 
 // Router 1 : fetch all habits of a respective user api/habit/fetchallhabits
