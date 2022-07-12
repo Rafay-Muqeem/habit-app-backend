@@ -21,11 +21,10 @@ setInterval(async ()=>{
         var myquery2 = { done: true };
         var newvalues2 = { $set: {done: false} ,  $inc: {streak:1} };
         db.collection("habits").updateMany( myquery2, newvalues2);
-    
+        
     });
 
 }, Interval);
-
 
 // Router 1 : fetch all habits of a respective user api/habit/fetchallhabits
 router.get('/fetchallhabits', fetchUser, async (req, res) => {
@@ -75,13 +74,14 @@ router.put('/updatehabit/:id', fetchUser, async (req, res) => {
     const { name, description } = req.body;
     try {
         const newHabit = {};
+
         if (name) {
             newHabit.name = name;
         }
         if (description) {
             newHabit.description = description;
         }
-
+        
         // Chacking whether habit with this id exist or not
         let habit = await Habit.findById(req.params.id);
         if (!habit) {
@@ -133,8 +133,7 @@ router.delete('/deletehabit/:id', fetchUser, async (req, res) => {
 
 router.put('/doneHabit/:id', fetchUser, async(req, res) => {
     try{
-        const {done, streak} = req.body;
-        const doneHabit = { done: done, streak: streak };
+        const doneHabit = { done: true };
 
         let habit = await Habit.findById(req.params.id);
 
