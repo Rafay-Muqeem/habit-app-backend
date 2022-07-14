@@ -22,10 +22,6 @@ const HabitSchema = new Schema({
         type: Boolean,
         default: false
     },
-    // LastPerformDate:{
-    //     type: Date,
-    //     default: Date.now
-    // },
     AddedDate:{
         type: Date,
         default: Date.now

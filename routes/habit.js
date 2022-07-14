@@ -3,28 +3,6 @@ const router = express.Router();
 const Habit = require('../models/Habit');
 const fetchUser = require('../middleware/fetchuser');
 const { body, validationResult } = require('express-validator');
-const moment = require('moment');
-const mongoose = require('mongoose');
-const mongoURI = "mongodb://localhost:27017/habit-app";
-
-const timeInSec = moment().endOf('day').valueOf();
-const Interval = timeInSec - Date.now();
-
-setInterval(async ()=>{
-    mongoose.connect(mongoURI, (error, db) => {
-        if(error) console.log(error);
-    
-        var myquery = {done: false};
-        var newvalues = { $set: {done: false, streak: 0} };
-        db.collection("habits").updateMany( myquery, newvalues);
-
-        var myquery2 = { done: true };
-        var newvalues2 = { $set: {done: false} ,  $inc: {streak:1} };
-        db.collection("habits").updateMany( myquery2, newvalues2);
-        
-    });
-
-}, Interval);
 
 // Router 1 : fetch all habits of a respective user api/habit/fetchallhabits
 router.get('/fetchallhabits', fetchUser, async (req, res) => {
