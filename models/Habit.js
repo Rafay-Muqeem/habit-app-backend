@@ -22,10 +22,14 @@ const HabitSchema = new Schema({
         type: Boolean,
         default: false
     },
-    AddedDate:{
+    addedDate:{
         type: Date,
         default: Date.now
     },
+    doneDate:{
+        type: Array,
+        default: []
+    }
 });
 
 module.exports = mongoose.model('habit', HabitSchema);

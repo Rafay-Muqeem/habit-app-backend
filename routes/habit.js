@@ -73,7 +73,6 @@ router.put('/updatehabit/:id', fetchUser, async (req, res) => {
 
         //Finally Updating the habit
         habit = await Habit.findByIdAndUpdate(req.params.id, { $set: newHabit }, { new: true });
-
         res.json({ habit });
     }
     catch (error) {
