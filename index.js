@@ -16,11 +16,7 @@ const timeInSec = moment().endOf('day').valueOf();
 const Interval = timeInSec - Date.now();
 
 const date = new Date();
-let day = date.getDay() - 1;
-
-if(day == -1){
-    day = 6;
-}
+let day = date.getDay();
 
 const updateDataMidnight = async () => {
     try {
@@ -62,21 +58,15 @@ const updateWeekData = async() => {
     }
 }
 
-if(date.getHours() == 0){
+setInterval(async () => {
+
     updateDataMidnight();
-}
 
-if(day == 6) {
+    if(day == 6){
+        updateWeekData();
+    }
 
-    updateWeekData();
-
-}
-
-// setInterval(async () => {
-
-//     updateDataMidnight();
-
-// }, Interval);
+}, Interval);
 
 
 app.use('/api/auth', require('./routes/auth'));
