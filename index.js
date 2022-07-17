@@ -39,7 +39,7 @@ const updateWeekData = async () => {
     try {
         await Habit.updateMany({}, {
             $set: {
-                doneDate: []
+                weeklyRecord: []
             }
         });
     }

@@ -26,7 +26,7 @@ const HabitSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    doneDate:{
+    weeklyRecord:{
         type: Array,
         default: []
     }

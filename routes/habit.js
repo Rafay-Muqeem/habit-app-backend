@@ -122,7 +122,7 @@ router.put('/doneHabit/:id', fetchUser, async(req, res) => {
             return res.status(401).send("Unauthorized Not Allowed");
         }
 
-        habit = await Habit.findByIdAndUpdate(req.params.id, { $set: {done: true}, $inc: {streak: 1}, $push: {doneDate: (new Date()).getDay()} }, { new: true });
+        habit = await Habit.findByIdAndUpdate(req.params.id, { $set: {done: true}, $inc: {streak: 1}, $push: {weeklyRecord: (new Date()).getDay()} }, { new: true });
         res.json({ Success: "Done Successfully", habit: habit });
 
     }
