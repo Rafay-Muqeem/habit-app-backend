@@ -18,8 +18,7 @@ router.get('/fetchallhabits', fetchUser, async (req, res) => {
 
 //Router 2 : Add habits for a respective user api/habit/addhabit
 router.post('/addhabit', fetchUser, [
-    body('name', 'Enter a valid name').isLength({ min: 3 }),
-    body('description', 'description must be atleast 5 characters long').isLength({ min: 5 })
+    body('name', 'Enter a valid name').isLength({ min: 3 })
 ], async (req, res) => {
 
     //Checking whether request is normal
@@ -110,7 +109,6 @@ router.delete('/deletehabit/:id', fetchUser, async (req, res) => {
 
 router.put('/doneHabit/:id', fetchUser, async(req, res) => {
     try{
-        const doneHabit = { done: true };
 
         let habit = await Habit.findById(req.params.id);
 
@@ -124,7 +122,7 @@ router.put('/doneHabit/:id', fetchUser, async(req, res) => {
             return res.status(401).send("Unauthorized Not Allowed");
         }
 
-        habit = await Habit.findByIdAndUpdate(req.params.id, { $set: doneHabit }, { new: true });
+        habit = await Habit.findByIdAndUpdate(req.params.id, { $set: {done: true}, $inc: {streak: 1}, $push: {doneDate: (new Date()).getDay()} }, { new: true });
         res.json({ Success: "Done Successfully", habit: habit });
 
     }

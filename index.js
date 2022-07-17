@@ -15,14 +15,10 @@ const Habit = require('./models/Habit');
 const timeInSec = moment().endOf('day').valueOf();
 const Interval = timeInSec - Date.now();
 
-const date = new Date();
-let day = date.getDay();
-
 const updateDataMidnight = async () => {
     try {
         await Habit.updateMany({ done: false }, {
             $set: {
-                done: false,
                 streak: 0
             }
         });
@@ -30,12 +26,6 @@ const updateDataMidnight = async () => {
         await Habit.updateMany({ done: true }, {
             $set: {
                 done: false
-            },
-            $push: {
-                doneDate: day
-            },
-            $inc: {
-                streak: 1
             }
         });
 
@@ -45,26 +35,25 @@ const updateDataMidnight = async () => {
 
 }
 
-const updateWeekData = async() => {
-    try{
+const updateWeekData = async () => {
+    try {
         await Habit.updateMany({}, {
             $set: {
                 doneDate: []
             }
-        })
+        });
     }
-    catch(error){
+    catch (error) {
         console.log(error);
     }
 }
 
 setInterval(async () => {
 
-    updateDataMidnight();
-
-    if(day == 6){
+    if ((new Date()).getDay() == 0) {
         updateWeekData();
     }
+    updateDataMidnight();
 
 }, Interval);
 
