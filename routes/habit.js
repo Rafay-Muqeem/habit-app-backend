@@ -54,8 +54,6 @@ router.put('/updatehabit/:id', fetchUser, async (req, res) => {
 
         if (name) {
             newHabit.name = name;
-        }
-        if (description) {
             newHabit.description = description;
         }
         
