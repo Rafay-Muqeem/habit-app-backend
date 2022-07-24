@@ -37,6 +37,7 @@ const updateDataMidnight = async () => {
 
 const updateWeekData = async () => {
     try {
+        console.log("week")
         await Habit.updateMany({}, {
             $set: {
                 weeklyRecord: []
@@ -48,9 +49,10 @@ const updateWeekData = async () => {
     }
 }
 
+
 setInterval(async () => {
 
-    if ((new Date()).getDay() == 0) {
+    if ((new Date()).getDay() === 0) {
         updateWeekData();
     }
     updateDataMidnight();
