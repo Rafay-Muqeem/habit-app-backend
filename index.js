@@ -66,6 +66,6 @@ app.use('/api/habit', require('./routes/habit'));
 //     res.send(path.join(__dirname, '/build/index.html'))
 // })
 
-app.listen(process.env.PORT, () => {
-    console.log(`Example app listening on port ${process.env.PORT}`)
+app.listen(process.env.PORT || 5000, () => {
+    console.log('Example app listening')
 })
