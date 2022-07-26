@@ -6,7 +6,6 @@ const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const fetchUser = require('../middleware/fetchuser');
 require('dotenv').config();
-const passport = require('passport');
 
 //Route 1 : Creating an endpoint and validating user data to create a new user in DB with express-validator
 router.post('/createuser', [
