@@ -5,10 +5,8 @@ const { body, validationResult } = require('express-validator');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const fetchUser = require('../middleware/fetchuser');
-const dotenv = require('dotenv');
-dotenv.config();
-
-const JWT_SECRET = "user@Token";
+require('dotenv').config();
+const passport = require('passport');
 
 //Route 1 : Creating an endpoint and validating user data to create a new user in DB with express-validator
 router.post('/createuser', [
@@ -28,8 +26,9 @@ router.post('/createuser', [
         //Checking for user with same email exist already
         try {
 
-            let user = await User.findOne({ email: req.body.email });
+            let user = await User.find({ email: req.body.email });
 
+            console.log(user);
             if (user) {
                 return res.status(400).json({ error: "User with this email already exist" });
             }
@@ -48,7 +47,7 @@ router.post('/createuser', [
                     id: user.id
                 }
             }
-            const token = jwt.sign(data, JWT_SECRET);
+            const token = jwt.sign(data, process.env.JWT_SECRET);
 
             res.json({ Message: "Successfully SignUp", token });
 
@@ -98,7 +97,7 @@ router.post('/login', [
         }
         //If everything is fine then we will generate the token and send it as a response
 
-        const token = jwt.sign(data, JWT_SECRET);
+        const token = jwt.sign(data, process.env.JWT_SECRET);
 
         res.json(token);
 
@@ -120,17 +119,17 @@ router.post('/getuser', fetchUser, async (req, res) => {
         console.error(error.message);
         res.status(500).send("Internal Server Error");
     }
-})
+});
 
 // Router 4 : Login with Google Federated Login
 router.post('/loginwithgoogle', async (req, res) => {
 
-    let { id, email, name, client_id, emailVerified } = req.body;
+    let { ID, email, name, client_id, emailVerified } = req.body;
 
     try {
 
         // Checking if user already logged in before using Google
-        let user = await User.findOne({ email });
+        let user = await User.findOne({ userIdByGoogle: ID });
 
         // If user had logged in before then we just send the token
         if (user) {
@@ -140,7 +139,7 @@ router.post('/loginwithgoogle', async (req, res) => {
                 }
             }
 
-            const token = jwt.sign(data, JWT_SECRET);
+            const token = jwt.sign(data, process.env.JWT_SECRET);
             res.json(token);
         }
 
@@ -154,7 +153,7 @@ router.post('/loginwithgoogle', async (req, res) => {
                 user = await User.create({
                     name: name,
                     email: email,
-                    userIdByGoogle: id,
+                    userIdByGoogle: ID,
                     emailVerifiedByGoogle: emailVerified
                 });
 
@@ -164,7 +163,7 @@ router.post('/loginwithgoogle', async (req, res) => {
                     }
                 }
 
-                const token = jwt.sign(data, JWT_SECRET);
+                const token = jwt.sign(data, process.env.JWT_SECRET);
 
                 res.json(token);
 
@@ -178,8 +177,7 @@ router.post('/loginwithgoogle', async (req, res) => {
     } catch (error) {
         res.status(500).send("Internal Server Error");
     }
-})
-
+});
 
 
 module.exports = router

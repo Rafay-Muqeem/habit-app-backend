@@ -19,7 +19,8 @@ const UserSchema = new Schema({
         type: Number
     },
     emailVerifiedByGoogle: {
-        type: Boolean
+        type: Boolean,
+        default: false
     },
     Date: {
         type: Date,
