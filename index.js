@@ -61,6 +61,9 @@ setInterval(async () => {
 
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/habit', require('./routes/habit'));
+app.get('/', (req, res) => {
+    res.send("Home")
+})
 // app.use(express.static(path.join(__dirname, '/build')));
 // app.get('*', (req, res) => {
 //     res.send(path.join(__dirname, '/build/index.html'))
