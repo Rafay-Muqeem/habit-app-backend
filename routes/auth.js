@@ -29,7 +29,7 @@ router.post('/createuser', [
 
             console.log(user);
             
-            if (user) {
+            if (user === []) {
                 return res.status(400).json({ error: "User with this email already exist" });
             }
 
