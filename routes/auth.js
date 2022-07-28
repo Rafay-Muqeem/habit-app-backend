@@ -26,8 +26,6 @@ router.post('/createuser', [
         try {
 
             let user = await User.find({ email: req.body.email });
-
-            console.log(user);
             
             if (user === []) {
                 return res.status(400).json({ error: "User with this email already exist" });
@@ -124,7 +122,7 @@ router.post('/getuser', fetchUser, async (req, res) => {
 // Router 4 : Login with Google Federated Login
 router.post('/loginwithgoogle', async (req, res) => {
 
-    let { ID, email, name, client_id, emailVerified } = req.body;
+    let { ID, email, name, emailVerified } = req.body;
 
     try {
 
@@ -147,7 +145,9 @@ router.post('/loginwithgoogle', async (req, res) => {
         else {
 
             // Checking user logging in with our Google console app or from some where else
-            if (client_id === process.env.HABIT_TRACKER_GOOGLE_CLIENT_ID) {
+            // if (client_id === process.env.HABIT_TRACKER_GOOGLE_CLIENT_ID) {
+
+                if (emailVerified == true) {
 
                 // After creating user we will generate token
                 user = await User.create({
