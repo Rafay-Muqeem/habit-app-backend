@@ -16,7 +16,7 @@ const UserSchema = new Schema({
         type: String
     },
     userIdByGoogle: {
-        type: Number
+        type: String
     },
     emailVerifiedByGoogle: {
         type: Boolean,

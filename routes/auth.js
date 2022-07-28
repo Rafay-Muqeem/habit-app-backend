@@ -6,6 +6,7 @@ const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const fetchUser = require('../middleware/fetchuser');
 require('dotenv').config();
+const { ObjectId } = require('mongodb');
 
 //Route 1 : Creating an endpoint and validating user data to create a new user in DB with express-validator
 router.post('/createuser', [
@@ -125,12 +126,14 @@ router.post('/loginwithgoogle', async (req, res) => {
     let { ID, email, name, emailVerified } = req.body;
 
     try {
-
+        
         // Checking if user already logged in before using Google
         let user = await User.findOne({ email: email });
 
+        
         // If user had logged in before then we just send the token
         if (user) {
+            console.log("here")
             const data = {
                 user: {
                     id: user.id
@@ -143,11 +146,9 @@ router.post('/loginwithgoogle', async (req, res) => {
 
         // If user had not then we will insert info about user that help to login in future
         else {
-
-            // Checking user logging in with our Google console app or from some where else
-            // if (client_id === process.env.HABIT_TRACKER_GOOGLE_CLIENT_ID) {
-
-                // if (emailVerified) {
+            
+            // Checking user email is verified by Google?
+                if (emailVerified) {
 
                 // After creating user we will generate token
                 user = await User.create({
@@ -156,7 +157,7 @@ router.post('/loginwithgoogle', async (req, res) => {
                     userIdByGoogle: ID,
                     emailVerifiedByGoogle: emailVerified
                 });
-
+                
                 const data = {
                     user: {
                         id: user.id
@@ -167,10 +168,10 @@ router.post('/loginwithgoogle', async (req, res) => {
 
                 res.json(token);
 
-            // }
-            // else {
-            //     res.status(401).send("Unauthorized");
-            // }
+            }
+            else {
+                res.status(401).send("Unauthorized");
+            }
         }
 
 

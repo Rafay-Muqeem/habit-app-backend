@@ -11,7 +11,6 @@ app.use(cors());
 const moment = require('moment');
 const Habit = require('./models/Habit');
 require('dotenv').config();
-// const path = require('path');
 
 const timeInSec = moment().endOf('day').valueOf();
 const Interval = timeInSec - Date.now();
@@ -64,10 +63,6 @@ app.use('/api/habit', require('./routes/habit'));
 app.get('/', (req, res) => {
     res.send("Home")
 })
-// app.use(express.static(path.join(__dirname, '/build')));
-// app.get('*', (req, res) => {
-//     res.send(path.join(__dirname, '/build/index.html'))
-// })
 
 const PORT = process.env.PORT || 5000;
 
