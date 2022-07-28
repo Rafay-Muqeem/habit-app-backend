@@ -147,7 +147,7 @@ router.post('/loginwithgoogle', async (req, res) => {
             // Checking user logging in with our Google console app or from some where else
             // if (client_id === process.env.HABIT_TRACKER_GOOGLE_CLIENT_ID) {
 
-                if (emailVerified == true) {
+                if (emailVerified) {
 
                 // After creating user we will generate token
                 user = await User.create({
