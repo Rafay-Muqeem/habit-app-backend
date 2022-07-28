@@ -127,7 +127,7 @@ router.post('/loginwithgoogle', async (req, res) => {
     try {
 
         // Checking if user already logged in before using Google
-        let user = await User.findOne({ userIdByGoogle: ID });
+        let user = await User.findOne({ email: email });
 
         // If user had logged in before then we just send the token
         if (user) {
@@ -147,7 +147,7 @@ router.post('/loginwithgoogle', async (req, res) => {
             // Checking user logging in with our Google console app or from some where else
             // if (client_id === process.env.HABIT_TRACKER_GOOGLE_CLIENT_ID) {
 
-                if (emailVerified) {
+                // if (emailVerified) {
 
                 // After creating user we will generate token
                 user = await User.create({
@@ -167,10 +167,10 @@ router.post('/loginwithgoogle', async (req, res) => {
 
                 res.json(token);
 
-            }
-            else {
-                res.status(401).send("Unauthorized");
-            }
+            // }
+            // else {
+            //     res.status(401).send("Unauthorized");
+            // }
         }
 
 
