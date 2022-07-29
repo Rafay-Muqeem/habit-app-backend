@@ -120,7 +120,6 @@ router.put('/doneHabit/:id', fetchUser, async (req, res) => {
             return res.status(401).send("Unauthorized Not Allowed");
         }
 
-        console.log(weeklyRecord)
         // if (weeklyRecord[weeklyRecord.length - 1] === (new Date()).getDay()) {
         //     habit = await Habit.findByIdAndUpdate(req.params.id, { $set: { done: true }, $inc: { streak: 1 } }, { new: true });
         //     res.json({ Success: "Done Successfully", habit: habit });
