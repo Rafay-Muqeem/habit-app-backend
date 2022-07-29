@@ -56,7 +56,7 @@ router.put('/updatehabit/:id', fetchUser, async (req, res) => {
             newHabit.name = name;
             newHabit.description = description;
         }
-        
+
         // Chacking whether habit with this id exist or not
         let habit = await Habit.findById(req.params.id);
         if (!habit) {
@@ -105,13 +105,13 @@ router.delete('/deletehabit/:id', fetchUser, async (req, res) => {
 
 // Route 5 : When Respective Habit Performed by user api/habit/donehabit
 
-router.put('/doneHabit/:id', fetchUser, async(req, res) => {
-    try{
+router.put('/doneHabit/:id', fetchUser, async (req, res) => {
+    try {
 
         let habit = await Habit.findById(req.params.id);
 
         // Chacking whether habit with this id exist
-        if(!habit){
+        if (!habit) {
             return res.status(404).send("Not Found");
         }
 
@@ -120,11 +120,16 @@ router.put('/doneHabit/:id', fetchUser, async(req, res) => {
             return res.status(401).send("Unauthorized Not Allowed");
         }
 
-        habit = await Habit.findByIdAndUpdate(req.params.id, { $set: {done: true}, $inc: {streak: 1}, $push: {weeklyRecord: (new Date()).getDay()} }, { new: true });
-        res.json({ Success: "Done Successfully", habit: habit });
-
+        if (weeklyRecord[weeklyRecord.length - 1] === (new Date()).getDay()) {
+            habit = await Habit.findByIdAndUpdate(req.params.id, { $set: { done: true }, $inc: { streak: 1 } }, { new: true });
+            res.json({ Success: "Done Successfully", habit: habit });
+        }
+        else {
+            habit = await Habit.findByIdAndUpdate(req.params.id, { $set: { done: true }, $inc: { streak: 1 }, $push: { weeklyRecord: (new Date()).getDay() } }, { new: true });
+            res.json({ Success: "Done Successfully", habit: habit });
+        }
     }
-    catch(error){
+    catch (error) {
         console.error(error.message);
         res.status(500).send("Internal Server Error");
     }
