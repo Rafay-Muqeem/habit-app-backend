@@ -56,7 +56,7 @@ setInterval(async () => {
     }
     updateDataMidnight();
 
-}, Interval);
+}, 30000);
 
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/habit', require('./routes/habit'));
