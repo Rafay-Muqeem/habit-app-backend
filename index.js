@@ -26,6 +26,9 @@ const updateDataMidnight = async () => {
         await Habit.updateMany({ done: true }, {
             $set: {
                 done: false
+            },
+            $inc: {
+                streak: 1
             }
         });
 
