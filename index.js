@@ -49,14 +49,14 @@ const updateWeekData = async () => {
     }
 }
 
-setInterval(async () => {
+// setInterval(async () => {
 
-    if ((new Date()).getDay() === 0) {
-        updateWeekData();
-    }
-    updateDataMidnight();
+//     if ((new Date()).getDay() === 0) {
+//         updateWeekData();
+//     }
+//     updateDataMidnight();
 
-}, 30000);
+// }, 30000);
 
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/habit', require('./routes/habit'));
