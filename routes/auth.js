@@ -29,7 +29,7 @@ router.post('/createuser', [
             let user = await User.find({ email: req.body.email });
             
             if (user === []) {
-                return res.status(400).json({ error: "User with this email already exist" });
+                return res.status(403).json({ error: "User with this email already exist" });
             }
 
             const salt = await bcryptjs.genSalt(10);
@@ -80,13 +80,13 @@ router.post('/login', [
         let user = await User.findOne({ email });
 
         if (!user) {
-            return res.status(400).send("Please provide correct credentials");
+            return res.status(404).send("Please provide correct credentials");
         }
 
         let passMatch = await bcryptjs.compare(password, user.password);
 
         if (!passMatch) {
-            return res.status(400).send("Please provide correct credentials");
+            return res.status(404).send("Please provide correct credentials");
         }
 
         const data = {
