@@ -69,7 +69,7 @@ router.post('/login', [
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() })
+        return res.status(400).json({ "errors": errors.array() })
     }
 
     let { email, password } = req.body;
@@ -80,7 +80,7 @@ router.post('/login', [
         let user = await User.findOne({ email });
 
         if (!user) {
-            return res.status(404).send("Please provide correct credentials");
+            return res.status(404).json({"error": "Please provide correct credentials"});
         }
 
         let passMatch = await bcryptjs.compare(password, user.password);
