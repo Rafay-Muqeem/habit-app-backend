@@ -17,16 +17,7 @@ router.get('/fetchallhabits', fetchUser, async (req, res) => {
 })
 
 //Router 2 : Add habits for a respective user api/habit/addhabit
-router.post('/addhabit', fetchUser, [
-    body('name', 'Enter a valid name').isLength({ min: 3 })
-], async (req, res) => {
-
-    //Checking whether request is normal
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() })
-    }
+router.post('/addhabit', fetchUser, async (req, res) => {
 
     try {
         const { name, description } = req.body;
@@ -48,8 +39,10 @@ router.post('/addhabit', fetchUser, [
 //Router 3: Update a respective habit of a respective user api/habit/updatehabit
 router.put('/updatehabit/:id', fetchUser, async (req, res) => {
 
-    const { name, description } = req.body;
     try {
+
+        const { name, description } = req.body;
+        
         const newHabit = {};
 
         if (name) {
