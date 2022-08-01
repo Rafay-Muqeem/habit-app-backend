@@ -6,7 +6,6 @@ const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const fetchUser = require('../middleware/fetchuser');
 require('dotenv').config();
-const { ObjectId } = require('mongodb');
 
 //Route 1 : Creating an endpoint and validating user data to create a new user in DB with express-validator
 router.post('/createuser', [
@@ -25,11 +24,10 @@ router.post('/createuser', [
 
         //Checking for user with same email exist already
         try {
-            console.log(req.body.email);
-            
+
             let user = await User.find({ email: req.body.email });
             
-            if (user) {
+            if (user !== []) {
                 return res.status(403).json({ error: "User with this email already exist" });
             }
 
