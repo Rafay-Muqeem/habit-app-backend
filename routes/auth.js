@@ -25,7 +25,8 @@ router.post('/createuser', [
 
         //Checking for user with same email exist already
         try {
-
+            console.log(req.body.email);
+            
             let user = await User.find({ email: req.body.email });
             
             if (user) {
