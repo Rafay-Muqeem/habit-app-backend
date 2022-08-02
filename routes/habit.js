@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const Habit = require('../models/Habit');
 const fetchUser = require('../middleware/fetchuser');
-const { body, validationResult } = require('express-validator');
 
 // Router 1 : fetch all habits of a respective user api/habit/fetchallhabits
 router.get('/fetchallhabits', fetchUser, async (req, res) => {
