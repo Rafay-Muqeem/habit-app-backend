@@ -7,6 +7,8 @@ const jwt = require('jsonwebtoken');
 const fetchUser = require('../middleware/fetchuser');
 require('dotenv').config();
 
+const checkNotAuth = require('../middleware/checkNotAuth');
+
 //Route 1 : Creating an endpoint and validating user data to create a new user in DB with express-validator
 router.post('/createuser', [
     body('name', 'Enter a valid name').isLength({ min: 3 }),
@@ -26,7 +28,7 @@ router.post('/createuser', [
         try {
 
             let user = await User.findOne({ email: req.body.email });
-            
+
             if (user) {
                 return res.status(403).json({ "error": "User with this email already exist" });
             }
@@ -59,7 +61,7 @@ router.post('/createuser', [
 
 //Route 2 : Creating an endpoint to authenticate user with login credentials
 
-router.post('/login', [
+router.post('/login', checkNotAuth, [
     body('email', "Enter a valid email address").isEmail(),
     body('password', "Password can't be blank").exists()
 ], async (req, res) => {
@@ -79,7 +81,7 @@ router.post('/login', [
         let user = await User.findOne({ email });
 
         if (!user) {
-            return res.status(404).json({"error": "Please provide correct credentials"});
+            return res.status(404).json({ "error": "Please provide correct credentials" });
         }
 
         let passMatch = await bcryptjs.compare(password, user.password);
@@ -95,7 +97,7 @@ router.post('/login', [
         }
         //If everything is fine then we will generate the token and send it as a response
 
-        const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: 60 * 30});
+        const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: 60 * 30 });
 
         res.json(token);
 
@@ -125,11 +127,11 @@ router.post('/loginwithgoogle', async (req, res) => {
     let { ID, email, name, emailVerified } = req.body;
 
     try {
-        
+
         // Checking if user already logged in before using Google
         let user = await User.findOne({ email: email });
 
-        
+
         // If user had logged in before then we just send the token
         if (user) {
             console.log("here")
@@ -139,15 +141,15 @@ router.post('/loginwithgoogle', async (req, res) => {
                 }
             }
 
-            const token = jwt.sign(data, process.env.JWT_SECRET);
+            const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: 60 * 30 });
             res.json(token);
         }
 
         // If user had not then we will insert info about user that help to login in future
         else {
-            
+
             // Checking user email is verified by Google?
-                if (emailVerified) {
+            if (emailVerified) {
 
                 // After creating user we will generate token
                 user = await User.create({
@@ -156,14 +158,14 @@ router.post('/loginwithgoogle', async (req, res) => {
                     userIdByGoogle: ID,
                     emailVerifiedByGoogle: emailVerified
                 });
-                
+
                 const data = {
                     user: {
                         id: user.id
                     }
                 }
 
-                const token = jwt.sign(data, process.env.JWT_SECRET);
+                const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: 60 * 30 });
 
                 res.json(token);
 
