@@ -7,8 +7,6 @@ const jwt = require('jsonwebtoken');
 const fetchUser = require('../middleware/fetchuser');
 require('dotenv').config();
 
-const checkNotAuth = require('../middleware/checkNotAuth');
-
 //Route 1 : Creating an endpoint and validating user data to create a new user in DB with express-validator
 router.post('/createuser', [
     body('name', 'Enter a valid name').isLength({ min: 3 }),
@@ -61,7 +59,7 @@ router.post('/createuser', [
 
 //Route 2 : Creating an endpoint to authenticate user with login credentials
 
-router.post('/login', checkNotAuth, [
+router.post('/login', [
     body('email', "Enter a valid email address").isEmail(),
     body('password', "Password can't be blank").exists()
 ], async (req, res) => {
