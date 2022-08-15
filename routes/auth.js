@@ -97,7 +97,7 @@ router.post('/login', [
 
         const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: 60 });
 
-        res.json(token);
+        res.json(token, Date.now() + (60*1000));
 
     }
     catch (error) {
