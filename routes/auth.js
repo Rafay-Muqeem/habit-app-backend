@@ -95,9 +95,9 @@ router.post('/login', [
         }
         //If everything is fine then we will generate the token and send it as a response
 
-        const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: 60 });
+        const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: 30*60 });
 
-        res.send({ token: token, sessionExpire: Date.now() + (60*1000)});
+        res.send({ token: token, sessionExpire: Date.now() + (30*60*1000)});
 
     }
     catch (error) {
