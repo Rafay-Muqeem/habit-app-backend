@@ -139,8 +139,10 @@ router.post('/loginwithgoogle', async (req, res) => {
                 }
             }
 
-            const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: 60 * 30 });
-            res.json(token);
+            const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: 30*60 });
+
+            res.send({ token: token, sessionExpire: Date.now() + (30*60*1000)});
+            
         }
 
         // If user had not then we will insert info about user that help to login in future
