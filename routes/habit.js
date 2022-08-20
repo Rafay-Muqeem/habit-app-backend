@@ -41,7 +41,7 @@ router.put('/updatehabit/:id', fetchUser, async (req, res) => {
     try {
 
         const { name, description } = req.body;
-        
+
         const newHabit = {};
 
         if (name) {
@@ -97,7 +97,7 @@ router.delete('/deletehabit/:id', fetchUser, async (req, res) => {
 
 // Route 5 : When Respective Habit Performed by user api/habit/donehabit
 
-router.put('/doneHabit/:id', fetchUser, async (req, res) => {
+router.put('/donehabit/:id', fetchUser, async (req, res) => {
     try {
 
         let habit = await Habit.findById(req.params.id);
@@ -112,20 +112,39 @@ router.put('/doneHabit/:id', fetchUser, async (req, res) => {
             return res.status(401).send("Unauthorized Not Allowed");
         }
 
-        // if (weeklyRecord[weeklyRecord.length - 1] === (new Date()).getDay()) {
-        //     habit = await Habit.findByIdAndUpdate(req.params.id, { $set: { done: true }, $inc: { streak: 1 } }, { new: true });
-        //     res.json({ Success: "Done Successfully", habit: habit });
-        // }
-        // else {
-            habit = await Habit.findByIdAndUpdate(req.params.id, { $set: { done: true }, $inc: { streak: 1 }, $push: { weeklyRecord: (new Date()).getDay() } }, { new: true });
-            res.json({ Success: "Done Successfully", habit: habit });
-        // }
+
+        habit = await Habit.findByIdAndUpdate(req.params.id, { $set: { done: true }, $inc: { streak: 1 }, $push: { weeklyRecord: (new Date()).getDay() } }, { new: true });
+        res.json({ Success: "Done Successfully", habit: habit });
+
     }
     catch (error) {
         console.error(error.message);
         res.status(500).send("Internal Server Error");
     }
 
+})
+
+router.put('/undonehabit/:id', fetchUser, async (req, res) => {
+    try {
+        let habit = await Habit.findById(req.params.id);
+
+        if (!habit) {
+            return res.status(404).send("NOT FOUND");
+        }
+
+        //Checking whether habit belongs to logged in user 
+        if (habit.user.toString() !== req.user.id) {
+            return res.status(401).send("Unauthorized Not Allowed");
+        }
+
+        habit = await Habit.findByIdAndUpdate(req.params.id, { $set: { done: false }, $inc: { streak: -1 }, $pop: { weeklyRecord: 1 } }, { new: true });
+        res.json({ Success: "Done Successfully", habit: habit });
+
+    }
+    catch (error) {
+        console.error(error.message);
+        res.status(500).send("Internal Server Error");
+    }
 })
 
 module.exports = router;
