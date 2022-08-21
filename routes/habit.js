@@ -113,7 +113,7 @@ router.put('/donehabit/:id', fetchUser, async (req, res) => {
         }
 
 
-        habit = await Habit.findByIdAndUpdate(req.params.id, { $set: { done: true }, $inc: { streak: 1 }, $push: { weeklyRecord: (new Date()).getDay() } }, { new: true });
+        habit = await Habit.findByIdAndUpdate(req.params.id, { $set: { done: true }, $inc: { streak: 1 }, $push: { weeklyRecord: new Date( (new Date()).toLocaleString( 'en-US', { timeZone: 'Asia/Karachi' } )).getDay() } }, { new: true });
         res.json({ Success: "Done Successfully", habit: habit });
 
     }
@@ -128,6 +128,7 @@ router.put('/undonehabit/:id', fetchUser, async (req, res) => {
     try {
         let habit = await Habit.findById(req.params.id);
 
+        // Chacking whether habit with this id exist
         if (!habit) {
             return res.status(404).send("NOT FOUND");
         }
