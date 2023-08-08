@@ -132,7 +132,7 @@ router.post('/loginwithgoogle', async (req, res) => {
 
         // If user had logged in before then we just send the token
         if (user) {
-            console.log("here")
+            
             const data = {
                 user: {
                     id: user.id
