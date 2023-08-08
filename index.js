@@ -11,6 +11,9 @@ require('dotenv').config();
 
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/habit', require('./routes/habit'));
+app.get('/', (req, res) => {
+    res.send("Home")
+})
 
 const PORT = process.env.PORT || 5000;
 
