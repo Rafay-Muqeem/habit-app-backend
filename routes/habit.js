@@ -49,7 +49,7 @@ router.put('/updatehabit/:id', fetchUser, async (req, res) => {
             newHabit.description = description;
         }
 
-        // Chacking whether habit with this id exist or not
+        // Checking whether habit with this id exist or not
         let habit = await Habit.findById(req.params.id);
         if (!habit) {
             return res.status(404).send("Not Found");
