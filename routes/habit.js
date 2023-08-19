@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const Habit = require('../models/Habit');
 const fetchUser = require('../middleware/fetchuser');
+const Habit = require('../models/Habit')
 
 // Router 1 : fetch all habits of a respective user api/habit/fetchallhabits
 router.get('/fetchallhabits', fetchUser, async (req, res) => {
@@ -147,5 +147,7 @@ router.put('/undonehabit/:id', fetchUser, async (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 })
+
+
 
 module.exports = router;

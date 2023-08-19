@@ -1,11 +1,13 @@
 const express = require('express');
 const User = require('../models/User');
+const Subscribe = require('../models/Subscription');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const fetchUser = require('../middleware/fetchuser');
 require('dotenv').config();
+const webPush = require('web-push');
 
 //Route 1 : Creating an endpoint and validating user data to create a new user in DB with express-validator
 router.post('/createuser', [
@@ -95,9 +97,9 @@ router.post('/login', [
         }
         //If everything is fine then we will generate the token and send it as a response
 
-        const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: 30*60 });
+        const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: 30 * 60 });
 
-        res.send({ token: token, sessionExpire: Date.now() + (30*60*1000)});
+        res.send({ user: user, token: token, sessionExpire: Date.now() + (30 * 60 * 1000) });
 
     }
     catch (error) {
@@ -125,24 +127,21 @@ router.post('/loginwithgoogle', async (req, res) => {
     let { ID, email, name, emailVerified } = req.body;
 
     try {
-
         // Checking if user already logged in before using Google
         let user = await User.findOne({ email: email });
 
-
         // If user had logged in before then we just send the token
         if (user) {
-            
+
             const data = {
                 user: {
                     id: user.id
                 }
             }
+            const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: 30 * 60 });
 
-            const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: 30*60 });
+            res.send({ user: user, token: token, sessionExpire: Date.now() + (30 * 60 * 1000) });
 
-            res.send({ token: token, sessionExpire: Date.now() + (30*60*1000)});
-            
         }
 
         // If user had not then we will insert info about user that help to login in future
@@ -167,7 +166,7 @@ router.post('/loginwithgoogle', async (req, res) => {
 
                 const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: 60 * 30 });
 
-                res.json(token);
+                res.send({ user: user, token: token, sessionExpire: Date.now() + (30 * 60 * 1000) });
 
             }
             else {
@@ -181,5 +180,24 @@ router.post('/loginwithgoogle', async (req, res) => {
     }
 });
 
+router.post('/notificationsubscribe', fetchUser, async (req, res) => {
+    const subscription = req.body['subscription']
+    const user = req.body['user']
+    const data = {
+        user: user['_id'],
+        subscriptionInfo: {
+            endpoint: subscription['endpoint'],
+            expirationTime: subscription['expirationTime'],
+            keys: subscription['keys'],
+        }
+    }
+    const oldSubscription = await Subscribe.find({user: user})
+    if (oldSubscription.length !== 0) {
+        await Subscribe.deleteOne(oldSubscription._id)
+        // return res.status(409).send("Already Subscribed")
+    }
 
+    const newSubscription = await Subscribe.create(data);
+    return res.status(200).send('Subscribed')
+});
 module.exports = router
